@@ -1,31 +1,48 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require('path');
+require("dotenv").config();
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// --------------------
 // Middleware
+// --------------------
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('✅ MongoDB connected'))
-.catch((err) => console.error('❌ MongoDB connection failed:', err));
+// --------------------
+// MongoDB Atlas Connection
+// --------------------
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+  })
+  .catch((error) => {
+    console.error("❌ MongoDB connection failed:", error.message);
+  });
 
+// --------------------
 // Routes
-const eventsRoute = require('./routes/events');
-app.use('/api/events', eventsRoute);
+// --------------------
+const eventsRoute = require("./routes/events");
+app.use("/api/events", eventsRoute);
 
-// Default route
-app.get('/', (req, res) => res.send('Sky Lounge backend running...'));
+// --------------------
+// Health Check Route
+// --------------------
+app.get("/", (req, res) => {
+  res.send("🚀 Sky Lounge backend is running");
+});
 
-// Start server
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// --------------------
+// Start Server
+// --------------------
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
